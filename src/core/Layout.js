@@ -1,4 +1,5 @@
 import React from 'react';
+import Menu from './Menu';
 
 const Layout = props => {
     const {
@@ -9,6 +10,7 @@ const Layout = props => {
     } = props;
     return (
         <div>
+            <Menu />
             <div className="jumbotron">
                 <h2>{title}</h2>
                 <p className="lead">{description}</p>
