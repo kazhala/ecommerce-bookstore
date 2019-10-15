@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import Layout from '../core/Layout';
-import { API } from '../config';
+import { Link } from 'react-router-dom';
+import { signUserUp } from '../auth';
 
 const initialState = {
     name: '',
@@ -15,12 +16,28 @@ const reducer = (state, action) => {
         case 'name':
             return {
                 ...state,
-                name: action.value
+                name: action.value,
+                error: ''
             };
         case 'email':
-            return { ...state, email: action.value };
+            return { ...state, email: action.value, error: '' };
         case 'password':
-            return { ...state, password: action.value };
+            return { ...state, password: action.value, error: '' };
+        case 'error':
+            return {
+                ...state,
+                error: action.value,
+                success: false
+            };
+        case 'success':
+            return {
+                ...state,
+                name: '',
+                email: '',
+                password: '',
+                error: '',
+                success: true
+            };
         default:
             return state;
     }
@@ -36,24 +53,33 @@ const SignUp = props => {
     const handleSubmit = e => {
         const { name, email, password } = inputState;
         e.preventDefault();
-        signUserUp(name, email, password);
+        signUserUp(name, email, password).then(data => {
+            console.log(data);
+            if (data.error) {
+                dispatch({ type: 'error', value: data.error });
+            } else {
+                dispatch({ type: 'success' });
+            }
+        });
     };
 
-    const signUserUp = (name, email, password) => {
-        fetch(`${API}/signup`, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, password })
-        })
-            .then(res => {
-                return res.json();
-            })
-            .catch(err => {
-                console.log(err);
-            });
+    const showError = () => {
+        return (
+            inputState.error && (
+                <div className="alert alert-danger">{inputState.error}</div>
+            )
+        );
+    };
+
+    const showSuccess = () => {
+        return (
+            inputState.success && (
+                <div className="alert alert-info">
+                    New account is created, please{' '}
+                    <Link to="/signin">sign in</Link>
+                </div>
+            )
+        );
     };
 
     const signUpForm = () => (
@@ -100,8 +126,9 @@ const SignUp = props => {
             description={'SignUp from Node React E-commerce App'}
             className={'container col-md-8 offset-md-2'}
         >
+            {showSuccess()}
+            {showError()}
             {signUpForm()}
-            {JSON.stringify(inputState)}
         </Layout>
     );
 };
