@@ -1,11 +1,11 @@
 import React, { useReducer } from 'react';
 import Layout from '../core/Layout';
 import { Redirect } from 'react-router-dom';
-import { signUserIn } from '../auth';
+import { signUserIn, authenticate } from '../auth';
 
 const initialState = {
-    email: '',
-    password: '',
+    email: 'kevin@gmail.com',
+    password: '111111',
     error: '',
     loading: false,
     redirectToReferer: false
@@ -56,7 +56,9 @@ const SignIn = props => {
             if (data.error) {
                 dispatch({ type: 'error', value: data.error });
             } else {
-                dispatch({ type: 'success' });
+                authenticate(data, () => {
+                    dispatch({ type: 'success' });
+                });
             }
         });
     };
@@ -115,8 +117,8 @@ const SignIn = props => {
 
     return (
         <Layout
-            title={'Sign Up'}
-            description={'SignUp from Node React E-commerce App'}
+            title={'Sign In'}
+            description={'Sign in to Node React E-commerce App'}
             className={'container col-md-8 offset-md-2'}
         >
             {showLoading()}
