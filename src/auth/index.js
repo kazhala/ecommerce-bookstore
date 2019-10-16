@@ -15,3 +15,20 @@ export const signUserUp = (name, email, password) => {
             console.log(err);
         });
 };
+
+export const signUserIn = (email, password) => {
+    return fetch(`${API}/signin`, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+    })
+        .then(res => {
+            return res.json();
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
