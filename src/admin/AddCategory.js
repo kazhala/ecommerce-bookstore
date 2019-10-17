@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
+import { createCategory } from './apiAdmin';
 
 const initialState = {
     name: '',
@@ -15,13 +16,26 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 error: '',
-                name: action.value
+                name: action.value,
+                success: false
             };
         case 'start':
             return {
                 ...state,
                 error: '',
                 success: false
+            };
+        case 'fail':
+            return {
+                ...state,
+                error: action.value,
+                success: false
+            };
+        case 'success':
+            return {
+                ...state,
+                error: '',
+                success: true
             };
         default:
             return state;
@@ -43,6 +57,15 @@ const AddCategory = props => {
     const handleSubmit = e => {
         e.preventDefault();
         dispatch({ type: 'start' });
+        createCategory(user._id, token, { name: categoryState.name }).then(
+            res => {
+                if (res.error) {
+                    dispatch({ type: 'fail', value: res.error });
+                } else {
+                    dispatch({ type: 'success' });
+                }
+            }
+        );
     };
 
     const newCategoryForm = () => (
@@ -55,10 +78,35 @@ const AddCategory = props => {
                     value={categoryState.name}
                     autoFocus
                     onChange={handleChange}
+                    required
                 />
             </div>
             <button className="btn btn-outline-primary">Create Category</button>
         </form>
+    );
+
+    const showSuccess = () => {
+        if (categoryState.success) {
+            return (
+                <h3 className="text-success">
+                    {categoryState.name} is created
+                </h3>
+            );
+        }
+    };
+
+    const showError = () => {
+        if (categoryState.error) {
+            return <h3 className="text-danger">Category already exists!</h3>;
+        }
+    };
+
+    const goBack = () => (
+        <div className="mt-5">
+            <Link to="/admin/dashboard" className="text-warning">
+                Back to DashBoard
+            </Link>
+        </div>
     );
 
     return (
@@ -67,7 +115,12 @@ const AddCategory = props => {
             description="Ready to add a new category?"
         >
             <div className="row">
-                <div className="col-md-8 offset-md-2">{newCategoryForm()}</div>
+                <div className="col-md-8 offset-md-2">
+                    {showError()}
+                    {showSuccess()}
+                    {newCategoryForm()}
+                    {goBack()}
+                </div>
             </div>
         </Layout>
     );
