@@ -1,19 +1,34 @@
 import { API } from '../config';
 
-export const createCategory = (userId, token, category) => {
-    return fetch(`${API}/category/create/${userId}`, {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(category)
-    })
-        .then(res => {
-            return res.json();
-        })
-        .catch(err => {
-            console.log(err);
+export const createCategory = async (userId, token, category) => {
+    try {
+        const res = await fetch(`${API}/category/create/${userId}`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(category)
         });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+export const createProduct = async (userId, token, product) => {
+    try {
+        const res = await fetch(`${API}/product/create/${userId}`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: product
+        });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
 };

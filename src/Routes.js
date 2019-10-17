@@ -8,6 +8,7 @@ import UserDashBoard from './user/UserDashBoard';
 import AdminRoute from './auth/AdminRoute';
 import AdminDashBoard from './user/AdminDashBoard';
 import AddCategory from './admin/AddCategory';
+import AddProduct from './admin/AddProduct';
 
 const Routes = props => {
     return (
@@ -30,6 +31,11 @@ const Routes = props => {
                     path="/create/category"
                     exact
                     component={AddCategory}
+                />
+                <AdminRoute
+                    path="/create/product"
+                    exact
+                    component={AddProduct}
                 />
             </Switch>
         </BrowserRouter>
