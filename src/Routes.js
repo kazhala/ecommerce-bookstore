@@ -1,3 +1,7 @@
+/**
+ * The container of the entire website
+ * React Router to only display one page
+ */
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import SignUp from './user/SignUp';

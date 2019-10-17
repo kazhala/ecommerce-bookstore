@@ -1,6 +1,10 @@
+/**
+ * API calls to the backend, and return the data retrieved
+ */
 import { API } from '../config';
 export const signUserUp = async (name, email, password) => {
     try {
+        //get the promise back from the api call
         const res = await fetch(`${API}/signup`, {
             method: 'POST',
             headers: {
@@ -9,6 +13,7 @@ export const signUserUp = async (name, email, password) => {
             },
             body: JSON.stringify({ name, email, password })
         });
+        //return the data
         return res.json();
     } catch (err) {
         console.log(err);
@@ -31,6 +36,7 @@ export const signUserIn = async (email, password) => {
     }
 };
 
+//get the user data from localstorage and perform call back (verify)
 export const authenticate = (data, next) => {
     if (typeof window !== undefined) {
         localStorage.setItem('jwt', JSON.stringify(data));
@@ -38,6 +44,7 @@ export const authenticate = (data, next) => {
     }
 };
 
+//clear the data from localStorage and perform call back (redirect to home page)
 export const signUserOut = async next => {
     if (typeof window !== undefined) {
         localStorage.removeItem('jwt');
@@ -53,6 +60,7 @@ export const signUserOut = async next => {
     }
 };
 
+//get the authenticated user detail from local storage(work around for redux)
 export const isAuthenticated = () => {
     if (typeof window === undefined) {
         return false;
