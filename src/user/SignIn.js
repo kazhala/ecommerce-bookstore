@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import Layout from '../core/Layout';
 import { Redirect } from 'react-router-dom';
-import { signUserIn, authenticate } from '../auth';
+import { signUserIn, authenticate, isAuthenticated } from '../auth';
 
 const initialState = {
     email: 'kevin@gmail.com',
@@ -41,6 +41,7 @@ const reducer = (state, action) => {
 };
 
 const SignIn = props => {
+    const { user } = isAuthenticated();
     const [inputState, dispatch] = useReducer(reducer, initialState);
 
     const handleChange = e => {
@@ -83,6 +84,13 @@ const SignIn = props => {
 
     const redirectUser = () => {
         if (inputState.redirectToReferer) {
+            if (user && user.role === 1) {
+                return <Redirect to="/admin/dashboard" />;
+            } else {
+                return <Redirect to="/user/dashboard" />;
+            }
+        }
+        if (isAuthenticated()) {
             return <Redirect to="/" />;
         }
     };
