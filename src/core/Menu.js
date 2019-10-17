@@ -24,6 +24,7 @@ const Menu = props => {
                         Home
                     </Link>
                 </li>
+                {/* display normal dashboard for general user */}
                 {isAuthenticated() && isAuthenticated().user.role === 0 && (
                     <li className="nav-item">
                         <Link
@@ -40,7 +41,7 @@ const Menu = props => {
                         <Link
                             className="nav-link"
                             to="/admin/dashboard"
-                            style={isActive(history, '/user/dashboard')}
+                            style={isActive(history, '/admin/dashboard')}
                         >
                             Dashboard
                         </Link>

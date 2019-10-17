@@ -4,12 +4,14 @@ import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
 import { createCategory } from './apiAdmin';
 
+//use reducer initial state
 const initialState = {
     name: '',
     error: '',
     success: false
 };
 
+//reducer for useReducer
 const reducer = (state, action) => {
     switch (action.type) {
         case 'name':
@@ -45,6 +47,7 @@ const reducer = (state, action) => {
 const AddCategory = props => {
     const [categoryState, dispatch] = useReducer(reducer, initialState);
 
+    //get the user and token from local storage
     const { user, token } = isAuthenticated();
 
     const handleChange = e => {
