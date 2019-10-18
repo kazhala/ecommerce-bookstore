@@ -32,3 +32,14 @@ export const createProduct = async (userId, token, product) => {
         console.log(err);
     }
 };
+
+export const getCategories = async () => {
+    try {
+        const res = await fetch(`${API}/categories`, {
+            method: 'GET'
+        });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
+};

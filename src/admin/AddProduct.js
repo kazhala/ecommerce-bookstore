@@ -2,7 +2,7 @@ import React, { useReducer, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
-import { createProduct } from './apiAdmin';
+import { createProduct, getCategories } from './apiAdmin';
 
 const initialState = {
     name: '',
@@ -35,11 +35,15 @@ const reducer = (state, action) => {
         case 'quantity':
             return { ...state, quantity: action.value };
         case 'mount':
-            return { ...state, formData: new FormData() };
+            return {
+                ...state,
+                categories: action.value.data,
+                formData: new FormData()
+            };
         case 'submit':
             return { ...state, loading: true, error: '' };
         case 'error':
-            return { ...state, loading: false, error: '' };
+            return { ...state, loading: false, error: action.value };
         case 'success':
             return {
                 ...state,
@@ -53,7 +57,7 @@ const reducer = (state, action) => {
                 photo: '',
                 loading: false,
                 error: '',
-                createdProduct: action.value.data.name
+                createdProduct: action.value.result.name
             };
         default:
             return state;
@@ -78,11 +82,20 @@ const AddProduct = props => {
         redirectToProfile
     } = formState;
 
-    useEffect(() => {
-        dispatch({ type: 'mount' });
-    }, []);
+    //load categories and set form data
+    const init = () => {
+        getCategories().then(res => {
+            if (res.error) {
+                dispatch({ type: 'error', value: res.error });
+            } else {
+                dispatch({ type: 'mount', value: res });
+            }
+        });
+    };
 
-    console.log(formData);
+    useEffect(() => {
+        init();
+    }, [createdProduct]);
 
     const handleChange = e => {
         const value = e.target.files ? e.target.files[0] : e.target.value;
@@ -94,10 +107,11 @@ const AddProduct = props => {
         e.preventDefault();
         dispatch({ type: 'submit' });
         createProduct(user._id, token, formData).then(res => {
+            console.log(res);
             if (res.error) {
-                dispatch({ type: 'error' });
+                dispatch({ type: 'error', value: res.error });
             } else {
-                dispatch({ type: 'success', value: { data: res } });
+                dispatch({ type: 'success', value: res });
             }
         });
     };
@@ -152,8 +166,13 @@ const AddProduct = props => {
                     name="category"
                     className="form-control"
                 >
-                    <option value="5da400ab09fe5c03f07b4641">PHP</option>
-                    <option value="5da400ab09fe5c03f07b4641">WTF</option>
+                    <option>Please select</option>
+                    {categories &&
+                        categories.map((category, index) => (
+                            <option key={index} value={category._id}>
+                                {category.name}
+                            </option>
+                        ))}
                 </select>
             </div>
             <div className="form-group">
@@ -173,6 +192,7 @@ const AddProduct = props => {
                     className="form-control"
                     name="shipping"
                 >
+                    <option>Please select</option>
                     <option value="0">No</option>
                     <option value="1">Yes</option>
                 </select>
@@ -181,13 +201,36 @@ const AddProduct = props => {
         </form>
     );
 
+    const showError = () => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
+    const showSuccess = () => {
+        return (
+            createdProduct && (
+                <div className="alert alert-info">
+                    <h2>{createdProduct} is created</h2>
+                </div>
+            )
+        );
+    };
+
+    const showLoading = () => {
+        return loading && <div className="alert alert-success">Loading...</div>;
+    };
+
     return (
         <Layout
             title="Add a new product"
             description="Ready to add a new product?"
         >
             <div className="row">
-                <div className="col-md-8 offset-md-2">{newPostForm()}</div>
+                <div className="col-md-8 offset-md-2">
+                    {showLoading()}
+                    {showError()}
+                    {showSuccess()}
+                    {newPostForm()}
+                </div>
             </div>
         </Layout>
     );
