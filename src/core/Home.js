@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 import Layout from './Layout';
 import { getProducts } from './apiCore';
+import Card from './Card';
 
 const initialState = {
     productSell: [],
@@ -27,7 +28,6 @@ const Home = props => {
 
     const loadProductsBySell = () => {
         getProducts('sold').then(res => {
-            console.log(res);
             if (res.error) {
                 dispatch({ type: 'error', value: res.error });
             } else {
@@ -38,7 +38,6 @@ const Home = props => {
 
     const loadProductsByArrival = () => {
         getProducts('createdAt').then(res => {
-            console.log(res);
             if (res.error) {
                 dispatch({ type: 'error', value: res.error });
             } else {
@@ -53,8 +52,23 @@ const Home = props => {
     }, []);
 
     return (
-        <Layout title={'Home Page'} description={'Node React E-commerce App'}>
-            {JSON.stringify(productSell)}
+        <Layout
+            title={'Home Page'}
+            description={'Node React E-commerce App'}
+            className="container-fluid"
+        >
+            <h2 className="mb-4">New Arrivals</h2>
+            <div className="row">
+                {productArrival.map((product, index) => (
+                    <Card key={index} product={product} />
+                ))}
+            </div>
+            <h2 className="mb-4">Best Sellers</h2>
+            <div className="row">
+                {productSell.map((product, index) => (
+                    <Card key={index} product={product} />
+                ))}
+            </div>
         </Layout>
     );
 };
