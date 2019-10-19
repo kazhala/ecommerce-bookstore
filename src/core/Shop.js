@@ -11,6 +11,7 @@ const Shop = props => {
     const [error, setError] = useState('');
     const [limit, setLimit] = useState(6);
     const [skip, setSkip] = useState(0);
+    const [size, setSize] = useState(0);
     const [myFilters, setMyFilters] = useState({
         filters: {
             category: [],
@@ -18,7 +19,7 @@ const Shop = props => {
         }
     });
 
-    const [filteredResults, setFilteredResults] = useState(null);
+    const [filteredResults, setFilteredResults] = useState([]);
 
     const init = () => {
         getCategories().then(res => {
@@ -53,12 +54,14 @@ const Shop = props => {
                 if (res.error) {
                     setError(res.error);
                 } else {
-                    setFilteredResults(res);
+                    setFilteredResults(res.data);
+                    setSize(res.size);
+                    setSkip(0);
                 }
             });
         };
-        loadFilteredResult(skip, limit, myFilters);
-    }, [skip, limit, myFilters]);
+        loadFilteredResult(0, limit, myFilters);
+    }, [limit, myFilters]);
 
     const handlePrice = value => {
         const data = prices;
@@ -69,6 +72,30 @@ const Shop = props => {
             }
         }
         return array;
+    };
+
+    const loadMore = () => {
+        let toSkip = skip + limit;
+        getFilteredProduct(toSkip, limit, myFilters.filters).then(res => {
+            if (res.error) {
+                setError(res.error);
+            } else {
+                setFilteredResults([...filteredResults, ...res.data]);
+                setSize(res.size);
+                setSkip(toSkip);
+            }
+        });
+    };
+
+    const loadMoreButton = () => {
+        return (
+            size > 0 &&
+            size >= limit && (
+                <button className="btn btn-warning mb-5" onClick={loadMore}>
+                    Load more
+                </button>
+            )
+        );
     };
 
     return (
@@ -94,7 +121,17 @@ const Shop = props => {
                         />
                     </div>
                 </div>
-                <div className="col-8">right side</div>
+                <div className="col-8">
+                    <h2 className="mb-4">Products</h2>
+                    <div className="row">
+                        {filteredResults &&
+                            filteredResults.map((product, index) => (
+                                <Card key={index} product={product} />
+                            ))}
+                    </div>
+                    <hr />
+                    {loadMoreButton()}
+                </div>
             </div>
         </Layout>
     );
