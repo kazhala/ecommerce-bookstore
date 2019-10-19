@@ -13,6 +13,7 @@ import AdminRoute from './auth/AdminRoute';
 import AdminDashBoard from './user/AdminDashBoard';
 import AddCategory from './admin/AddCategory';
 import AddProduct from './admin/AddProduct';
+import Shop from './core/Shop';
 
 const Routes = props => {
     return (
@@ -21,6 +22,7 @@ const Routes = props => {
                 <Route path="/" exact component={Home} />
                 <Route path="/signin" exact component={SignIn} />
                 <Route path="/signup" exact component={SignUp} />
+                <Route path="/shop" exact component={Shop} />
                 <PrivateRoute
                     path="/user/dashboard"
                     exact

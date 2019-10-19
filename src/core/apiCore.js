@@ -13,3 +13,14 @@ export const getProducts = async sortBy => {
         console.log(err);
     }
 };
+
+export const getCategories = async () => {
+    try {
+        const res = await fetch(`${API}/categories`, {
+            method: 'GET'
+        });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
