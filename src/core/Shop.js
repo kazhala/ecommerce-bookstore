@@ -3,6 +3,8 @@ import Layout from './Layout';
 import Card from './Card';
 import { getCategories } from './apiCore';
 import CheckBox from './CheckBox';
+import { prices } from './FixedPrices';
+import RadioBox from './RadioBox';
 
 const Shop = props => {
     const [categories, setCategories] = useState([]);
@@ -51,6 +53,13 @@ const Shop = props => {
                             categories={categories}
                         />
                     </ul>
+                    <h4>Filter by price range</h4>
+                    <div>
+                        <RadioBox
+                            prices={prices}
+                            handleFilters={handleFilters}
+                        />
+                    </div>
                 </div>
                 <div className="col-8">right side</div>
             </div>
