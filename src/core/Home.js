@@ -46,6 +46,7 @@ const Home = props => {
         });
     };
 
+    //on mount, call api to load products
     useEffect(() => {
         loadProductsByArrival();
         loadProductsBySell();

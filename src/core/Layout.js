@@ -1,3 +1,6 @@
+/**
+ * layout for all pages, hoc component
+ */
 import React from 'react';
 import Menu from './Menu';
 import '../styles.css';

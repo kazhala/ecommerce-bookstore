@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { signUserOut, isAuthenticated } from '../auth';
 
+//check for active tabs
 const isActive = (history, path) => {
     if (history.location.pathname === path) {
         return { color: '#ff9900' };
@@ -45,6 +46,7 @@ const Menu = props => {
                         </Link>
                     </li>
                 )}
+                {/* only admin could have access */}
                 {isAuthenticated() && isAuthenticated().user.role === 1 && (
                     <li className="nav-item">
                         <Link
@@ -57,6 +59,7 @@ const Menu = props => {
                     </li>
                 )}
 
+                {/* only display to non authenticated user */}
                 {!isAuthenticated() && (
                     <>
                         <li className="nav-item">

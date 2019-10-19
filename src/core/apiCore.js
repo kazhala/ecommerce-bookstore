@@ -1,3 +1,6 @@
+/**
+ * API call actions for the core components
+ */
 import { API } from '../config';
 
 export const getProducts = async sortBy => {

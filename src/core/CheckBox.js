@@ -1,19 +1,24 @@
+/**
+ * check box for filter bar
+ */
 import React, { useState, useEffect } from 'react';
 
 const CheckBox = props => {
     const { categories, handleFilters } = props;
-
+    //array to keep track which box are clicked
     const [checked, setChecked] = useState([]);
 
     const handleToggle = categoryId => {
         const currentCategoryId = checked.indexOf(categoryId);
         const newCategoryId = [...checked];
+        //not found, push it in : found it, splice it out
         if (currentCategoryId === -1) {
             newCategoryId.push(categoryId);
         } else {
             newCategoryId.splice(currentCategoryId, 1);
         }
         setChecked(newCategoryId);
+        //call parent function handle filter action
         handleFilters(newCategoryId, 'category');
     };
 

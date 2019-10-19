@@ -1,3 +1,6 @@
+/**
+ * price filter option
+ */
 export const prices = [
     {
         _id: 0,

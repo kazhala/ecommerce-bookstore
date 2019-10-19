@@ -31,10 +31,12 @@ const Shop = props => {
         });
     };
 
+    //component did mount, load categories
     useEffect(() => {
         init();
     }, []);
 
+    //handle filters event
     const handleFilters = (filters, filterBy) => {
         setMyFilters(prevFilter => {
             const newFilters = { ...prevFilter };
@@ -47,6 +49,7 @@ const Shop = props => {
         });
     };
 
+    //listen to filter bar change and perform filter
     useEffect(() => {
         const loadFilteredResult = (skip, limit, newFilters) => {
             getFilteredProduct(skip, limit, newFilters.filters).then(res => {
@@ -63,6 +66,7 @@ const Shop = props => {
         loadFilteredResult(0, limit, myFilters);
     }, [limit, myFilters]);
 
+    //transform the price data to arrays
     const handlePrice = value => {
         const data = prices;
         let array = [];
@@ -74,6 +78,7 @@ const Shop = props => {
         return array;
     };
 
+    //perform load more action
     const loadMore = () => {
         let toSkip = skip + limit;
         getFilteredProduct(toSkip, limit, myFilters.filters).then(res => {
@@ -89,6 +94,7 @@ const Shop = props => {
 
     const loadMoreButton = () => {
         return (
+            // check if the loadmore button need to show
             size > 0 &&
             size >= limit && (
                 <button className="btn btn-warning mb-5" onClick={loadMore}>

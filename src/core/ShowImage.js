@@ -1,3 +1,6 @@
+/**
+ * call api to load image individually
+ */
 import React from 'react';
 import { API } from '../config';
 

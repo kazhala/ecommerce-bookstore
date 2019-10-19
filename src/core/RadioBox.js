@@ -5,6 +5,7 @@ const RadioBox = props => {
     const [value, setValue] = useState(0);
 
     const handleChange = e => {
+        //call parent functiont o set filters
         handleFilters(e.target.value, 'price');
         setValue(e.target.value);
     };
