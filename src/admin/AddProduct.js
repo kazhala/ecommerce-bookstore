@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
@@ -59,6 +59,12 @@ const reducer = (state, action) => {
                 error: '',
                 createdProduct: action.value.result.name
             };
+        case 'newSubmission':
+            return {
+                ...state,
+                error: '',
+                createdProduct: ''
+            };
         default:
             return state;
     }
@@ -66,6 +72,9 @@ const reducer = (state, action) => {
 
 const AddProduct = props => {
     const [formState, dispatch] = useReducer(reducer, initialState);
+
+    const [success, setSuccess] = useState(false);
+
     const { user, token } = isAuthenticated();
     const {
         name,
@@ -95,23 +104,25 @@ const AddProduct = props => {
 
     useEffect(() => {
         init();
-    }, [createdProduct]);
+    }, [success]);
 
     const handleChange = e => {
         const value = e.target.files ? e.target.files[0] : e.target.value;
         formData.set(e.target.name, value);
         dispatch({ type: e.target.name, value: value });
+        dispatch({ type: 'newSubmission' });
     };
 
     const handleSubmit = e => {
         e.preventDefault();
         dispatch({ type: 'submit' });
         createProduct(user._id, token, formData).then(res => {
-            console.log(res);
             if (res.error) {
                 dispatch({ type: 'error', value: res.error });
+                setSuccess(false);
             } else {
                 dispatch({ type: 'success', value: res });
+                setSuccess(true);
             }
         });
     };
@@ -219,6 +230,14 @@ const AddProduct = props => {
         return loading && <div className="alert alert-success">Loading...</div>;
     };
 
+    const goBack = () => (
+        <div className="mt-5 mb-5">
+            <Link to="/admin/dashboard" className="text-warning">
+                Back to DashBoard
+            </Link>
+        </div>
+    );
+
     return (
         <Layout
             title="Add a new product"
@@ -230,6 +249,7 @@ const AddProduct = props => {
                     {showError()}
                     {showSuccess()}
                     {newPostForm()}
+                    {goBack()}
                 </div>
             </div>
         </Layout>
