@@ -31,7 +31,7 @@ const reducer = (state, action) => {
         case 'category':
             return { ...state, category: action.value };
         case 'shipping':
-            return { ...state, category: action.value };
+            return { ...state, shipping: action.value };
         case 'quantity':
             return { ...state, quantity: action.value };
         case 'mount':
@@ -176,6 +176,7 @@ const AddProduct = props => {
                     onChange={handleChange}
                     name="category"
                     className="form-control"
+                    value={category}
                 >
                     <option>Please select</option>
                     {categories &&
@@ -202,10 +203,15 @@ const AddProduct = props => {
                     onChange={handleChange}
                     className="form-control"
                     name="shipping"
+                    value={shipping}
                 >
                     <option>Please select</option>
-                    <option value="0">No</option>
-                    <option value="1">Yes</option>
+                    {categories && (
+                        <>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </>
+                    )}
                 </select>
             </div>
             <button className="btn btn-outline-primary">Crate Product</button>
