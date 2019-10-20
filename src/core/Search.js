@@ -20,6 +20,8 @@ const reducer = (state, action) => {
             return { ...state, search: action.value, searched: false };
         case 'results':
             return { ...state, searched: true, results: action.value };
+        case 'clearResults':
+            return { ...state, searched: false, results: [] };
         default:
             return state;
     }
@@ -86,12 +88,21 @@ const Search = props => {
                 </h2>
                 <div className="row">
                     {results.map((product, index) => (
-                        <Card key={index} product={product} />
+                        <div className="col-4 mb-3" key={index}>
+                            <Card product={product} />
+                        </div>
                     ))}
                 </div>
             </div>
         );
     };
+
+    //clears the search results when user clears the search field
+    useEffect(() => {
+        if (search.length === 0 && results.length > 0) {
+            dispatch({ type: 'clearResults' });
+        }
+    }, [search, results]);
 
     const searchForm = () => (
         <form onSubmit={searchSubmit}>

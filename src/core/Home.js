@@ -63,13 +63,17 @@ const Home = props => {
             <h2 className="mb-4">New Arrivals</h2>
             <div className="row">
                 {productArrival.map((product, index) => (
-                    <Card key={index} product={product} />
+                    <div className="col-4 mb-3" key={index}>
+                        <Card product={product} />
+                    </div>
                 ))}
             </div>
             <h2 className="mb-4">Best Sellers</h2>
             <div className="row">
                 {productSell.map((product, index) => (
-                    <Card key={index} product={product} />
+                    <div className="col-4 mb-3" key={index}>
+                        <Card product={product} />
+                    </div>
                 ))}
             </div>
         </Layout>

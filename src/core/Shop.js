@@ -132,7 +132,9 @@ const Shop = props => {
                     <div className="row">
                         {filteredResults &&
                             filteredResults.map((product, index) => (
-                                <Card key={index} product={product} />
+                                <div className="col-4 mb-3" key={index}>
+                                    <Card product={product} />
+                                </div>
                             ))}
                     </div>
                     <hr />
