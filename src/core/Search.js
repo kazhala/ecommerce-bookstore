@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
-import { getCategories } from './apiCore';
+import { getCategories, list } from './apiCore';
+import Card from './Card';
 
 const initialState = {
     categories: [],
@@ -13,6 +14,12 @@ const reducer = (state, action) => {
     switch (action.type) {
         case 'categories':
             return { ...state, categories: action.value };
+        case 'category':
+            return { ...state, category: action.value, searched: false };
+        case 'search':
+            return { ...state, search: action.value, searched: false };
+        case 'results':
+            return { ...state, searched: true, results: action.value };
         default:
             return state;
     }
@@ -37,8 +44,38 @@ const Search = props => {
         loadCategories();
     }, []);
 
-    const searchSubmit = () => {};
-    const handleChange = () => {};
+    const searchExec = () => {
+        // console.log(search, category);
+        if (search) {
+            list({ search: search || undefined, category: category }).then(
+                res => {
+                    if (res.error) {
+                        console.log(res.error);
+                    } else {
+                        dispatch({ type: 'results', value: res });
+                    }
+                }
+            );
+        }
+    };
+
+    const searchSubmit = e => {
+        e.preventDefault();
+        searchExec();
+    };
+    const handleChange = e => {
+        dispatch({ type: e.target.name, value: e.target.value });
+    };
+
+    const searchedProducts = (results = []) => {
+        return (
+            <div className="row">
+                {results.map((product, index) => (
+                    <Card key={index} product={product} />
+                ))}
+            </div>
+        );
+    };
 
     const searchForm = () => (
         <form onSubmit={searchSubmit}>
@@ -63,6 +100,7 @@ const Search = props => {
                         className="form-control"
                         name="search"
                         onChange={handleChange}
+                        required
                         placeholder="Search by name"
                     />
                 </div>
@@ -78,7 +116,10 @@ const Search = props => {
 
     return (
         <div className="row">
-            <div className="container">{searchForm()}</div>
+            <div className="container mb-3">{searchForm()}</div>
+            <div className="container-fluid mb-3">
+                {searchedProducts(results)}
+            </div>
         </div>
     );
 };
