@@ -49,7 +49,7 @@ export const getFilteredProduct = async (skip, limit, filters = {}) => {
 export const list = async params => {
     try {
         const query = queryString.stringify(params);
-        console.log(query);
+        // console.log(query);
         const res = await fetch(`${API}/products/search?${query}`, {
             method: 'GET'
         });
