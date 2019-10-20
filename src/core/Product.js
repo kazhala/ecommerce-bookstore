@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Layout from './Layout';
-import { read } from './apiCore';
+import { read, listRelated } from './apiCore';
 import Card from './Card';
 
 const Product = props => {
     const [product, setProduct] = useState({});
     const [error, setError] = useState(false);
+    const [relatedProduct, setRelatedProduct] = useState([]);
     const { match } = props;
 
     useEffect(() => {
@@ -15,12 +16,21 @@ const Product = props => {
                     setError(res.error);
                 } else {
                     setProduct(res);
+                    listRelated(res._id).then(res => {
+                        if (res.error) {
+                            setError(res.error);
+                        } else {
+                            setRelatedProduct(res);
+                        }
+                    });
                 }
             });
         };
         const productId = match.params.productId;
         loadSingleProduct(productId);
     }, [match]);
+
+    // console.log(relatedProduct);
 
     return (
         <Layout
@@ -33,9 +43,19 @@ const Product = props => {
             className="container-fluid"
         >
             <div className="row">
-                {product && product.description && (
-                    <Card product={product} showViewProductButton={false} />
-                )}
+                <div className="col-8">
+                    {product && product.description && (
+                        <Card product={product} showViewProductButton={false} />
+                    )}
+                </div>
+                <div className="col-4">
+                    <h4>Related products</h4>
+                    {relatedProduct.map((product, index) => (
+                        <div className="mb-3" key={index}>
+                            <Card product={product} />
+                        </div>
+                    ))}
+                </div>
             </div>
         </Layout>
     );
