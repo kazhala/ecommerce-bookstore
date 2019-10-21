@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { signUserOut, isAuthenticated } from '../auth';
+import { itemTotal } from './cartHelpers';
 
 //check for active tabs
 const isActive = (history, path) => {
@@ -34,6 +35,19 @@ const Menu = props => {
                         Shop
                     </Link>
                 </li>
+                <li className="nav-item">
+                    <Link
+                        className="nav-link"
+                        to="/cart"
+                        style={isActive(history, '/cart')}
+                    >
+                        Cart{' '}
+                        <sup>
+                            <small className="cart-badge">{itemTotal()}</small>
+                        </sup>
+                    </Link>
+                </li>
+
                 {/* display normal dashboard for general user */}
                 {isAuthenticated() && isAuthenticated().user.role === 0 && (
                     <li className="nav-item">
