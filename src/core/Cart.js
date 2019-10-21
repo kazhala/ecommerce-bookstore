@@ -51,10 +51,8 @@ const Cart = props => {
                     {items.length > 0 ? showItems() : noItemMessage()}
                 </div>
                 <div className="col-6">
-                    <p>
-                        Show checkout options/shipping address/total/update
-                        quantity
-                    </p>
+                    <h2>Your cart summary</h2>
+                    <hr />
                     <Checkout products={items} />
                 </div>
             </div>
