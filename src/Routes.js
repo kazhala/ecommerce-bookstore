@@ -15,6 +15,7 @@ import AddCategory from './admin/AddCategory';
 import AddProduct from './admin/AddProduct';
 import Shop from './core/Shop';
 import Product from './core/Product';
+import Cart from './core/Cart';
 
 const Routes = props => {
     return (
@@ -45,6 +46,7 @@ const Routes = props => {
                     component={AddProduct}
                 />
                 <Route path="/product/:productId" exact component={Product} />
+                <Route path="/cart" exact component={Cart} />
             </Switch>
         </BrowserRouter>
     );
