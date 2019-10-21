@@ -80,3 +80,14 @@ export const listRelated = async productId => {
         console.log(err);
     }
 };
+
+export const getBraintreeClientToken = async (userId, token) => {
+    try {
+        const res = await fetch(`${API}/braintree/getToken/${userId}`, {
+            method: 'GET'
+        });
+        return res.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
