@@ -6,14 +6,17 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import ShowImage from './ShowImage';
 import moment from 'moment';
-import { addItem } from './cartHelpers';
+import { addItem, updateItem } from './cartHelpers';
 
 const Card = ({
     product,
     showViewProductButton = true,
-    showAddToCart = true
+    showAddToCart = true,
+    cartUpdate = false
 }) => {
     const [redirect, setRedirect] = useState(false);
+
+    const [count, setCount] = useState(product.count ? product.count : 0);
 
     const showViewButton = () => {
         return (
@@ -52,6 +55,35 @@ const Card = ({
         );
     };
 
+    const handleChange = (e, productId) => {
+        setCount(e.target.value < 1 ? 1 : e.target.value);
+        if (e.target.value >= 1) {
+            updateItem(productId, e.target.value);
+        }
+    };
+
+    const showCartUpdateOptions = cartUpdate => {
+        return (
+            cartUpdate && (
+                <div>
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">
+                                Adjust Quantity
+                            </span>
+                        </div>
+                        <input
+                            type="number"
+                            className="form-control"
+                            value={count}
+                            onChange={e => handleChange(e, product._id)}
+                        />
+                    </div>
+                </div>
+            )
+        );
+    };
+
     const showStock = quantity => {
         return quantity > 0 ? (
             <span className="badge badge-primary badge-pill">In Stock</span>
@@ -80,6 +112,7 @@ const Card = ({
                 <br />
                 {showViewButton()}
                 {showAddToCartButton(showAddToCart)}
+                {showCartUpdateOptions(cartUpdate)}
             </div>
         </div>
     );

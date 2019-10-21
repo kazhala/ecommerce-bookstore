@@ -20,7 +20,12 @@ const Cart = props => {
                 </h2>
                 <hr />
                 {items.map((product, index) => (
-                    <Card key={index} product={product} showAddToCart={false} />
+                    <Card
+                        key={index}
+                        product={product}
+                        showAddToCart={false}
+                        cartUpdate={true}
+                    />
                 ))}
             </div>
         );
