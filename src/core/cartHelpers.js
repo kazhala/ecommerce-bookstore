@@ -57,6 +57,7 @@ export const updateItem = (productId, count) => {
         });
         localStorage.setItem('cart', JSON.stringify(cart));
     }
+    return cart;
 };
 
 export const removeItem = productId => {

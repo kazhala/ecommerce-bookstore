@@ -60,7 +60,8 @@ const Card = ({
     const handleChange = (e, productId) => {
         setCount(e.target.value < 1 ? 1 : e.target.value);
         if (e.target.value >= 1) {
-            updateItem(productId, e.target.value);
+            const updatedItem = updateItem(productId, e.target.value);
+            setCartItems(updatedItem);
         }
     };
 
