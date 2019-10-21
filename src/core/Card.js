@@ -6,13 +6,15 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import ShowImage from './ShowImage';
 import moment from 'moment';
-import { addItem, updateItem } from './cartHelpers';
+import { addItem, updateItem, removeItem } from './cartHelpers';
 
 const Card = ({
     product,
     showViewProductButton = true,
     showAddToCart = true,
-    cartUpdate = false
+    cartUpdate = false,
+    showRemoveProduct = false,
+    setCartItems
 }) => {
     const [redirect, setRedirect] = useState(false);
 
@@ -84,6 +86,24 @@ const Card = ({
         );
     };
 
+    const handleRemove = () => {
+        const newItems = removeItem(product._id);
+        setCartItems(newItems);
+    };
+
+    const showRemoveProductButton = showRemoveProduct => {
+        return (
+            showRemoveProduct && (
+                <button
+                    onClick={handleRemove}
+                    className="btn btn-outline-danger mt-2 mb-2"
+                >
+                    Remove Product
+                </button>
+            )
+        );
+    };
+
     const showStock = quantity => {
         return quantity > 0 ? (
             <span className="badge badge-primary badge-pill">In Stock</span>
@@ -112,6 +132,7 @@ const Card = ({
                 <br />
                 {showViewButton()}
                 {showAddToCartButton(showAddToCart)}
+                {showRemoveProductButton(showRemoveProduct)}
                 {showCartUpdateOptions(cartUpdate)}
             </div>
         </div>

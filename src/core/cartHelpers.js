@@ -50,11 +50,24 @@ export const updateItem = (productId, count) => {
         if (localStorage.getItem('cart')) {
             cart = JSON.parse(localStorage.getItem('cart'));
         }
-        cart.map((product, index) => {
+        cart.forEach((product, index) => {
             if (product._id === productId) {
                 cart[index].count = count;
             }
         });
         localStorage.setItem('cart', JSON.stringify(cart));
     }
+};
+
+export const removeItem = productId => {
+    let cart = [];
+    let newCart = [];
+    if (typeof window !== undefined) {
+        if (localStorage.getItem('cart')) {
+            cart = JSON.parse(localStorage.getItem('cart'));
+        }
+        newCart = cart.filter(product => product._id !== productId);
+        localStorage.setItem('cart', JSON.stringify(newCart));
+    }
+    return newCart;
 };

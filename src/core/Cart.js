@@ -25,6 +25,8 @@ const Cart = props => {
                         product={product}
                         showAddToCart={false}
                         cartUpdate={true}
+                        showRemoveProduct={true}
+                        setCartItems={setItems}
                     />
                 ))}
             </div>
