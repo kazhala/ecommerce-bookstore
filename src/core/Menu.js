@@ -43,7 +43,9 @@ const Menu = props => {
                     >
                         Cart{' '}
                         <sup>
-                            <small className="cart-badge">{itemTotal()}</small>
+                            <small className="cart-badge">
+                                {props.length ? props.length : itemTotal()}
+                            </small>
                         </sup>
                     </Link>
                 </li>

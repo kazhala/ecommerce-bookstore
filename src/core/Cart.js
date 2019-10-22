@@ -8,9 +8,15 @@ import Checkout from './Checkout';
 const Cart = props => {
     const [items, setItems] = useState([]);
 
+    const [length, setLength] = useState(0);
+
     useEffect(() => {
         setItems(getCart());
     }, []);
+
+    useEffect(() => {
+        setLength(items.length);
+    }, [items]);
 
     const showItems = () => {
         return (
@@ -45,6 +51,7 @@ const Cart = props => {
             title="Shopping Cart"
             description="Manage your cart items, Add remove checkout or continue shopping"
             className="container-fluid"
+            length={length}
         >
             <div className="row">
                 <div className="col-6">
@@ -53,7 +60,7 @@ const Cart = props => {
                 <div className="col-6">
                     <h2>Your cart summary</h2>
                     <hr />
-                    <Checkout products={items} />
+                    <Checkout products={items} setCartItems={setItems} />
                 </div>
             </div>
         </Layout>

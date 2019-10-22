@@ -72,3 +72,10 @@ export const removeItem = productId => {
     }
     return newCart;
 };
+
+export const emptyCart = next => {
+    if (typeof window !== undefined) {
+        localStorage.removeItem('cart');
+        next();
+    }
+};

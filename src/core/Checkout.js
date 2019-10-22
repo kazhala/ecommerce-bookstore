@@ -3,6 +3,7 @@ import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
 import { getBraintreeClientToken, processPayment } from './apiCore';
 import DropIn from 'braintree-web-drop-in-react';
+import { emptyCart } from './cartHelpers';
 
 const initialState = {
     success: false,
@@ -34,7 +35,7 @@ const reducer = (state, action) => {
 };
 
 const Checkout = props => {
-    const { products } = props;
+    const { products, setCartItems } = props;
     const [checkoutState, dispatch] = useReducer(reducer, initialState);
 
     const { success, clientToken, error, instance, address } = checkoutState;
@@ -53,11 +54,6 @@ const Checkout = props => {
         };
         getToken(userId, token);
     }, [userId, token]);
-
-    // !just here for testing
-    useEffect(() => {
-        if (products.length === 0) dispatch({ type: 'clearError' });
-    }, [products]);
 
     const getTotal = () => {
         return products
@@ -94,6 +90,10 @@ const Checkout = props => {
                 };
                 processPayment(userId, token, paymentData)
                     .then(res => {
+                        setCartItems([]);
+                        emptyCart(() =>
+                            console.log('payment success and empty cart')
+                        );
                         dispatch({ type: 'success', value: res });
                     })
                     .catch(err => {

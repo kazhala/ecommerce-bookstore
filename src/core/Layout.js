@@ -10,11 +10,12 @@ const Layout = props => {
         title = 'Title',
         description = 'Description',
         children,
-        className
+        className,
+        length
     } = props;
     return (
         <div>
-            <Menu />
+            <Menu length={length} />
             <div className="jumbotron">
                 <h2>{title}</h2>
                 <p className="lead">{description}</p>
