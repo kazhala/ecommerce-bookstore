@@ -1,7 +1,7 @@
 import React, { useReducer, useEffect } from 'react';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
-import { getBraintreeClientToken } from './apiCore';
+import { getBraintreeClientToken, processPayment } from './apiCore';
 import DropIn from 'braintree-web-drop-in-react';
 
 const initialState = {
@@ -15,13 +15,19 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'error':
+            if (action.value === 'User not found') {
+                return { ...state, error: 'Please sign in' };
+            }
             return { ...state, error: action.value };
         case 'token':
             return { ...state, clientToken: action.value };
         case 'instance':
             return { ...state, instance: action.value };
         case 'clearError':
-            return { ...state, error: '' };
+            return { ...state, error: '', success: false };
+        case 'success': {
+            return { ...state, success: true };
+        }
         default:
             return state;
     }
@@ -32,6 +38,8 @@ const Checkout = props => {
     const [checkoutState, dispatch] = useReducer(reducer, initialState);
 
     const { success, clientToken, error, instance, address } = checkoutState;
+    const userId = isAuthenticated() && isAuthenticated().user._id;
+    const token = isAuthenticated() && isAuthenticated().token;
 
     useEffect(() => {
         const getToken = (userId, token) => {
@@ -43,10 +51,13 @@ const Checkout = props => {
                 }
             });
         };
-        const userId = isAuthenticated() && isAuthenticated().user._id;
-        const token = isAuthenticated() && isAuthenticated().token;
         getToken(userId, token);
-    }, []);
+    }, [userId, token]);
+
+    // !just here for testing
+    useEffect(() => {
+        if (products.length === 0) dispatch({ type: 'clearError' });
+    }, [products]);
 
     const getTotal = () => {
         return products
@@ -73,18 +84,25 @@ const Checkout = props => {
         let getNonce = instance
             .requestPaymentMethod()
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 nonce = res.nonce;
                 //once get the nonce(card type, card number), send nonce to the backend
                 //total to be charged
-                console.log(
-                    'send nonce and total to process',
-                    nonce,
-                    getTotal(products)
-                );
+                const paymentData = {
+                    paymentMethodNonce: nonce,
+                    amount: getTotal(products)
+                };
+                processPayment(userId, token, paymentData)
+                    .then(res => {
+                        dispatch({ type: 'success', value: res });
+                    })
+                    .catch(err => {
+                        // console.log(err);
+                        dispatch({ type: 'error', value: err });
+                    });
             })
             .catch(err => {
-                console.log('dropIn error', error);
+                // console.log('dropIn error', error);
                 dispatch({
                     type: 'error',
                     value: err.message
@@ -105,12 +123,25 @@ const Checkout = props => {
                                 dispatch({ type: 'instance', value: instance })
                             }
                         />
-                        <button className="btn btn-success" onClick={handlePay}>
+                        <button
+                            className="btn btn-success btn-block"
+                            onClick={handlePay}
+                        >
                             Pay
                         </button>
                     </div>
                 )}
             </div>
+        );
+    };
+
+    const showSuccess = success => {
+        return (
+            success && (
+                <div className="alert alert-info">
+                    Thank you, payment was successful!
+                </div>
+            )
         );
     };
 
@@ -121,6 +152,7 @@ const Checkout = props => {
     return (
         <div>
             <h2>Total: ${getTotal()}</h2>
+            {showSuccess(success)}
             {showError(error)}
             {showCheckout()}
         </div>
