@@ -10,16 +10,17 @@ const initialState = {
     clientToken: null,
     error: '',
     instance: {},
-    address: ''
+    address: '',
+    loading: false
 };
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'error':
             if (action.value === 'User not found') {
-                return { ...state, error: 'Please sign in' };
+                return { ...state, error: 'Please sign in', loading: false };
             }
-            return { ...state, error: action.value };
+            return { ...state, loading: false, error: action.value };
         case 'token':
             return { ...state, clientToken: action.value };
         case 'instance':
@@ -28,6 +29,9 @@ const reducer = (state, action) => {
             return { ...state, error: '', success: false };
         case 'success': {
             return { ...state, success: true };
+        }
+        case 'loading': {
+            return { ...state, loading: !state.loading };
         }
         default:
             return state;
@@ -38,7 +42,14 @@ const Checkout = props => {
     const { products, setCartItems } = props;
     const [checkoutState, dispatch] = useReducer(reducer, initialState);
 
-    const { success, clientToken, error, instance, address } = checkoutState;
+    const {
+        success,
+        loading,
+        clientToken,
+        error,
+        instance,
+        address
+    } = checkoutState;
     const userId = isAuthenticated() && isAuthenticated().user._id;
     const token = isAuthenticated() && isAuthenticated().token;
 
@@ -74,6 +85,7 @@ const Checkout = props => {
     };
 
     const handlePay = () => {
+        dispatch({ type: 'loading' });
         //send the nounce to the server
         //nouce = instance.requestPaymentMethod()
         let nonce;
@@ -91,9 +103,7 @@ const Checkout = props => {
                 processPayment(userId, token, paymentData)
                     .then(res => {
                         setCartItems([]);
-                        emptyCart(() =>
-                            console.log('payment success and empty cart')
-                        );
+                        emptyCart(() => dispatch({ type: 'loading' }));
                         dispatch({ type: 'success', value: res });
                     })
                     .catch(err => {
@@ -117,7 +127,10 @@ const Checkout = props => {
                     <div>
                         <DropIn
                             options={{
-                                authorization: clientToken
+                                authorization: clientToken,
+                                paypal: {
+                                    flow: 'vault'
+                                }
                             }}
                             onInstance={instance =>
                                 dispatch({ type: 'instance', value: instance })
@@ -145,6 +158,10 @@ const Checkout = props => {
         );
     };
 
+    const showLoading = loading => {
+        return loading && <h2>Loading</h2>;
+    };
+
     const showError = error => {
         return error && <div className="alert alert-danger">{error}</div>;
     };
@@ -152,6 +169,7 @@ const Checkout = props => {
     return (
         <div>
             <h2>Total: ${getTotal()}</h2>
+            {showLoading(loading)}
             {showSuccess(success)}
             {showError(error)}
             {showCheckout()}
