@@ -20,6 +20,8 @@ const reducer = (state, action) => {
             return { ...state, clientToken: action.value };
         case 'instance':
             return { ...state, instance: action.value };
+        case 'clearError':
+            return { ...state, error: '' };
         default:
             return state;
     }
@@ -64,9 +66,35 @@ const Checkout = props => {
         );
     };
 
+    const handlePay = () => {
+        //send the nounce to the server
+        //nouce = instance.requestPaymentMethod()
+        let nonce;
+        let getNonce = instance
+            .requestPaymentMethod()
+            .then(res => {
+                console.log(res);
+                nonce = res.nonce;
+                //once get the nonce(card type, card number), send nonce to the backend
+                //total to be charged
+                console.log(
+                    'send nonce and total to process',
+                    nonce,
+                    getTotal(products)
+                );
+            })
+            .catch(err => {
+                console.log('dropIn error', error);
+                dispatch({
+                    type: 'error',
+                    value: err.message
+                });
+            });
+    };
+
     const showDropIn = () => {
         return (
-            <div>
+            <div onBlur={() => dispatch({ type: 'clearError' })}>
                 {clientToken && products.length > 0 && (
                     <div>
                         <DropIn
@@ -77,16 +105,23 @@ const Checkout = props => {
                                 dispatch({ type: 'instance', value: instance })
                             }
                         />
-                        <button className="btn btn-success">Checkout</button>
+                        <button className="btn btn-success" onClick={handlePay}>
+                            Pay
+                        </button>
                     </div>
                 )}
             </div>
         );
     };
 
+    const showError = error => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
     return (
         <div>
             <h2>Total: ${getTotal()}</h2>
+            {showError(error)}
             {showCheckout()}
         </div>
     );
