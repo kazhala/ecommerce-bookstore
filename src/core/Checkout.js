@@ -1,7 +1,11 @@
 import React, { useReducer, useEffect } from 'react';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
-import { getBraintreeClientToken, processPayment } from './apiCore';
+import {
+    getBraintreeClientToken,
+    processPayment,
+    createOrder
+} from './apiCore';
 import DropIn from 'braintree-web-drop-in-react';
 import { emptyCart } from './cartHelpers';
 
@@ -32,6 +36,9 @@ const reducer = (state, action) => {
         }
         case 'loading': {
             return { ...state, loading: !state.loading };
+        }
+        case 'address': {
+            return { ...state, address: action.value };
         }
         default:
             return state;
@@ -102,9 +109,17 @@ const Checkout = props => {
                 };
                 processPayment(userId, token, paymentData)
                     .then(res => {
-                        setCartItems([]);
-                        emptyCart(() => dispatch({ type: 'loading' }));
-                        dispatch({ type: 'success', value: res });
+                        const orderData = {
+                            products: products,
+                            transaction_id: res.transaction.id,
+                            amount: res.transaction.amount,
+                            address: address
+                        };
+                        createOrder(userId, token, orderData).then(res => {
+                            setCartItems([]);
+                            emptyCart(() => dispatch({ type: 'loading' }));
+                            dispatch({ type: 'success' });
+                        });
                     })
                     .catch(err => {
                         // console.log(err);
@@ -120,11 +135,26 @@ const Checkout = props => {
             });
     };
 
+    const handleAddress = e => {
+        dispatch({ type: 'address', value: e.target.value });
+    };
+
     const showDropIn = () => {
         return (
             <div onBlur={() => dispatch({ type: 'clearError' })}>
                 {clientToken && products.length > 0 && (
                     <div>
+                        <div className="form-group mb-3">
+                            <label className="text-muted">
+                                Delivery address:{' '}
+                            </label>
+                            <textarea
+                                onChange={handleAddress}
+                                className="form-control"
+                                value={address}
+                                placeholder="Please enter your delivery address"
+                            />
+                        </div>
                         <DropIn
                             options={{
                                 authorization: clientToken,
