@@ -28,7 +28,7 @@ const Orders = props => {
                 setStatusValues(res);
             }
         });
-    }, [user, token]);
+    }, [loadOrders]);
 
     const showOrdersLength = () => {
         if (orders.length > 0) {
@@ -92,7 +92,7 @@ const Orders = props => {
                 <div className="col-md-8 offset-md-2">
                     {showOrdersLength()}
 
-                    {orders.map((order, orderIndex) => (
+                    {orders.reverse().map((order, orderIndex) => (
                         <div
                             className="mt-5"
                             key={orderIndex}
