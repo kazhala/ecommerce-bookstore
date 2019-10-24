@@ -5,12 +5,14 @@ import { listOrders, getStatusValues, updateOrderStatus } from './apiAdmin';
 import moment from 'moment';
 import BigSpinner from '../Loaders/BigSpinner';
 
-const { user, token } = isAuthenticated();
-
 const Orders = props => {
     const [orders, setOrders] = useState([]);
     const [statusValues, setStatusValues] = useState([]);
     const [loading, setLoading] = useState(false);
+    const {
+        user: { _id },
+        token
+    } = isAuthenticated();
 
     const loadOrders = useCallback((userId, token) => {
         setLoading(true);
@@ -25,15 +27,20 @@ const Orders = props => {
     }, []);
 
     useEffect(() => {
-        loadOrders(user._id, token);
-        getStatusValues(user._id, token).then(res => {
-            if (res.error) {
-                console.log(res.error);
-            } else {
-                setStatusValues(res);
-            }
-        });
-    }, [loadOrders]);
+        const loadStatusValue = (userId, token) => {
+            getStatusValues(userId, token).then(res => {
+                if (res.error) {
+                    console.log(res.error);
+                } else {
+                    setStatusValues(res);
+                }
+            });
+        };
+        loadOrders(_id, token);
+        loadStatusValue(_id, token);
+    }, [loadOrders, _id, token]);
+
+    // console.log('re-rendered');
 
     const showOrdersLength = () => {
         if (orders.length > 0) {
@@ -84,15 +91,13 @@ const Orders = props => {
 
     const handleStatusChange = (e, orderId) => {
         // console.log('Update order status');
-        updateOrderStatus(user._id, token, orderId, e.target.value).then(
-            res => {
-                if (res.error) {
-                    console.log('Status update failed');
-                } else {
-                    loadOrders(user._id, token);
-                }
+        updateOrderStatus(_id, token, orderId, e.target.value).then(res => {
+            if (res.error) {
+                console.log('Status update failed');
+            } else {
+                loadOrders(_id, token);
             }
-        );
+        });
     };
 
     return (
