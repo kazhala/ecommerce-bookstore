@@ -2,13 +2,15 @@ import React, { useReducer, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { read, update, updateUser } from './apiUser';
+import ButtonSpinner from '../Loaders/ButtonSpinner';
 
 const initialState = {
     name: '',
     email: '',
     password: '',
     error: '',
-    success: false
+    success: false,
+    loading: false
 };
 
 const reducer = (state, action) => {
@@ -31,22 +33,23 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 error: '',
+                loading: false,
                 success: true,
                 name: action.payload.name,
                 email: action.payload.email
             };
+        case 'loading':
+            return { ...state, loading: true };
         default:
             return state;
     }
 };
 
-const { token } = isAuthenticated();
-
 const Profile = props => {
     const [userState, dispatch] = useReducer(reducer, initialState);
-    const { name, email, password, error, success } = userState;
+    const { loading, name, email, password, error, success } = userState;
     const { history, match } = props;
-
+    const { token } = isAuthenticated();
     useEffect(() => {
         const init = userId => {
             read(userId, token).then(res => {
@@ -62,7 +65,9 @@ const Profile = props => {
         };
 
         init(match.params.userId);
-    }, [match]);
+    }, [match, token]);
+
+    // console.log('re-rendered');
 
     const handleChange = (e, value) => {
         dispatch({ type: value, value: e.target.value });
@@ -70,6 +75,7 @@ const Profile = props => {
 
     const handleSubmit = e => {
         e.preventDefault();
+        dispatch({ type: 'loading' });
         update(props.match.params.userId, token, {
             name,
             email,
@@ -128,9 +134,13 @@ const Profile = props => {
                     value={password}
                 />
             </div>
-            <button className="btn btn-primary" onClick={handleSubmit}>
-                Submit
-            </button>
+            {loading ? (
+                <ButtonSpinner color="btn-primary" />
+            ) : (
+                <button className="btn btn-primary" onClick={handleSubmit}>
+                    Submit
+                </button>
+            )}
         </form>
     );
 

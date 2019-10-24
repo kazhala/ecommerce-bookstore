@@ -6,14 +6,13 @@ import { getPurchaseHistory } from './apiUser';
 import moment from 'moment';
 import BigSpinner from '../Loaders/BigSpinner';
 
-const {
-    user: { _id, name, email, role },
-    token
-} = isAuthenticated();
-
 const UserDashBoard = props => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
+    const {
+        user: { _id, name, email, role },
+        token
+    } = isAuthenticated();
 
     useEffect(() => {
         const init = (userId, token) => {
@@ -28,7 +27,7 @@ const UserDashBoard = props => {
             });
         };
         init(_id, token);
-    }, []);
+    }, [_id, token]);
 
     const userLinks = () => {
         return (

@@ -73,6 +73,7 @@ const Checkout = props => {
         };
         getToken(userId, token);
     }, [userId, token]);
+    // console.log('re-rendered');
 
     const getTotal = () => {
         return products
