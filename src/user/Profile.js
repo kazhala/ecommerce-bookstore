@@ -1,7 +1,6 @@
 import React, { useReducer, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
-import { Link } from 'react-router-dom';
 import { read, update, updateUser } from './apiUser';
 
 const initialState = {
@@ -46,6 +45,7 @@ const { token } = isAuthenticated();
 const Profile = props => {
     const [userState, dispatch] = useReducer(reducer, initialState);
     const { name, email, password, error, success } = userState;
+    const { history, match } = props;
 
     useEffect(() => {
         const init = userId => {
@@ -61,8 +61,8 @@ const Profile = props => {
             });
         };
 
-        init(props.match.params.userId);
-    }, []);
+        init(match.params.userId);
+    }, [match]);
 
     const handleChange = (e, value) => {
         dispatch({ type: value, value: e.target.value });
@@ -90,15 +90,14 @@ const Profile = props => {
             }
         });
     };
-
     useEffect(() => {
         const redirectUser = success => {
             if (success) {
-                props.history.push('/user/dashboard');
+                history.push('/user/dashboard');
             }
         };
         redirectUser(success);
-    }, [success]);
+    }, [success, history]);
 
     const profileUpdate = (name, email, password) => (
         <form>
