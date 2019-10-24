@@ -5,6 +5,8 @@ import { getCategories, getFilteredProduct } from './apiCore';
 import CheckBox from './CheckBox';
 import { prices } from './FixedPrices';
 import RadioBox from './RadioBox';
+import BigSpinner from '../Loaders/BigSpinner';
+import ButtonSpinner from '../Loaders/ButtonSpinner';
 
 const Shop = props => {
     const [categories, setCategories] = useState([]);
@@ -12,6 +14,8 @@ const Shop = props => {
     const [limit, setLimit] = useState(6);
     const [skip, setSkip] = useState(0);
     const [size, setSize] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [myFilters, setMyFilters] = useState({
         filters: {
             category: [],
@@ -22,7 +26,9 @@ const Shop = props => {
     const [filteredResults, setFilteredResults] = useState([]);
 
     const init = () => {
+        setLoading(true);
         getCategories().then(res => {
+            setLoading(false);
             if (res.error) {
                 setError(res.error);
             } else {
@@ -52,7 +58,9 @@ const Shop = props => {
     //listen to filter bar change and perform filter
     useEffect(() => {
         const loadFilteredResult = (skip, limit, newFilters) => {
+            setLoading(true);
             getFilteredProduct(skip, limit, newFilters.filters).then(res => {
+                setLoading(false);
                 // console.log(res);
                 if (res.error) {
                     setError(res.error);
@@ -81,7 +89,9 @@ const Shop = props => {
     //perform load more action
     const loadMore = () => {
         let toSkip = skip + limit;
+        setLoadingMore(true);
         getFilteredProduct(toSkip, limit, myFilters.filters).then(res => {
+            setLoadingMore(false);
             if (res.error) {
                 setError(res.error);
             } else {
@@ -95,11 +105,16 @@ const Shop = props => {
     const loadMoreButton = () => {
         return (
             // check if the loadmore button need to show
-            size > 0 &&
-            size >= limit && (
-                <button className="btn btn-warning mb-5" onClick={loadMore}>
-                    Load more
-                </button>
+            loadingMore ? (
+                <div className="mb-5">
+                    <ButtonSpinner color="btn-warning" />
+                </div>
+            ) : (
+                size > 0 && size >= limit && (
+                    <button className="btn btn-warning mb-5" onClick={loadMore}>
+                        Load more
+                    </button>
+                )
             )
         );
     };
@@ -130,12 +145,16 @@ const Shop = props => {
                 <div className="col-8">
                     <h2 className="mb-4">Products</h2>
                     <div className="row">
-                        {filteredResults &&
+                        {loading ? (
+                            <BigSpinner />
+                        ) : (
+                            filteredResults &&
                             filteredResults.map((product, index) => (
                                 <div className="col-4 mb-3" key={index}>
                                     <Card product={product} />
                                 </div>
-                            ))}
+                            ))
+                        )}
                     </div>
                     <hr />
                     {loadMoreButton()}

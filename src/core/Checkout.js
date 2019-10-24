@@ -8,6 +8,7 @@ import {
 } from './apiCore';
 import DropIn from 'braintree-web-drop-in-react';
 import { emptyCart } from './cartHelpers';
+import ButtonSpinner from '../Loaders/ButtonSpinner';
 
 const initialState = {
     success: false,
@@ -151,6 +152,7 @@ const Checkout = props => {
                             <textarea
                                 onChange={handleAddress}
                                 className="form-control"
+                                required
                                 value={address}
                                 placeholder="Please enter your delivery address"
                             />
@@ -166,12 +168,16 @@ const Checkout = props => {
                                 dispatch({ type: 'instance', value: instance })
                             }
                         />
-                        <button
-                            className="btn btn-success btn-block"
-                            onClick={handlePay}
-                        >
-                            Pay
-                        </button>
+                        {loading ? (
+                            <ButtonSpinner color="btn-success" block />
+                        ) : (
+                            <button
+                                className="btn btn-success btn-block"
+                                onClick={handlePay}
+                            >
+                                Pay
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -188,10 +194,6 @@ const Checkout = props => {
         );
     };
 
-    const showLoading = loading => {
-        return loading && <h2>Loading</h2>;
-    };
-
     const showError = error => {
         return error && <div className="alert alert-danger">{error}</div>;
     };
@@ -199,7 +201,6 @@ const Checkout = props => {
     return (
         <div>
             <h2>Total: ${getTotal()}</h2>
-            {showLoading(loading)}
             {showSuccess(success)}
             {showError(error)}
             {showCheckout()}

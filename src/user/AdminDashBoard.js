@@ -28,6 +28,11 @@ const AdminDashBoard = props => {
                             View Orders
                         </Link>
                     </li>
+                    <li className="list-group-item">
+                        <Link className="nav-link" to="/user/dashboard">
+                            User DashBoard
+                        </Link>
+                    </li>
                 </ul>
             </div>
         );

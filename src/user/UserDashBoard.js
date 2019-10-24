@@ -3,6 +3,9 @@ import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
 import { getPurchaseHistory } from './apiUser';
+import moment from 'moment';
+import BigSpinner from '../Loaders/BigSpinner';
+
 const {
     user: { _id, name, email, role },
     token
@@ -10,10 +13,13 @@ const {
 
 const UserDashBoard = props => {
     const [history, setHistory] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const init = (userId, token) => {
+            setLoading(true);
             getPurchaseHistory(userId, token).then(res => {
+                setLoading(false);
                 if (res.error) {
                     console.log(res.err);
                 } else {
@@ -62,22 +68,42 @@ const UserDashBoard = props => {
     const purchaseHistory = history => (
         <div className="card md-5">
             <h3 className="card-header">Purchase History</h3>
-            <ul className="list-group">
-                <li className="list-group-item">
-                    {history.map((order, oIndex) => (
-                        <div key={oIndex}>
-                            {oIndex === 0 ? null : <hr />}
-                            {order.products.map((product, pIndex) => (
-                                <div key={pIndex}>
-                                    <h6>Product name: {product.name}</h6>
-                                    <h6>Product price: {product.price}</h6>
-                                    <h6>Purchased date: {product.createdAt}</h6>
+            {loading ? (
+                <BigSpinner />
+            ) : (
+                <ul className="list-group">
+                    <li className="list-group-item">
+                        {history.reverse().map((order, oIndex) => (
+                            <div key={oIndex}>
+                                {oIndex === 0 ? null : <hr />}
+                                {order.products.map((product, pIndex) => (
+                                    <div
+                                        key={pIndex}
+                                        style={{ padding: '1rem' }}
+                                    >
+                                        <h6>Product name: {product.name}</h6>
+                                        <h6>Product price: {product.price}</h6>
+                                        <h6>Quantity: {product.count}</h6>
+                                    </div>
+                                ))}
+                                <div
+                                    style={{
+                                        border: '1px solid #eee',
+                                        borderRadius: '5px',
+                                        padding: '1rem'
+                                    }}
+                                >
+                                    <h6>
+                                        Purchased date:{' '}
+                                        {moment(order.createdAt).fromNow()}
+                                    </h6>
+                                    <h6>Total price: ${order.amount}</h6>
                                 </div>
-                            ))}
-                        </div>
-                    ))}
-                </li>
-            </ul>
+                            </div>
+                        ))}
+                    </li>
+                </ul>
+            )}
         </div>
     );
 

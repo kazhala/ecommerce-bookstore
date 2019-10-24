@@ -3,14 +3,19 @@ import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { listOrders, getStatusValues, updateOrderStatus } from './apiAdmin';
 import moment from 'moment';
+import BigSpinner from '../Loaders/BigSpinner';
+
 const { user, token } = isAuthenticated();
 
 const Orders = props => {
     const [orders, setOrders] = useState([]);
     const [statusValues, setStatusValues] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const loadOrders = useCallback((userId, token) => {
+        setLoading(true);
         listOrders(userId, token).then(res => {
+            setLoading(false);
             if (res.error) {
                 console.log(res.error);
             } else {
@@ -38,7 +43,11 @@ const Orders = props => {
                 </h1>
             );
         } else {
-            return <h1 className="text-danger">No orders</h1>;
+            return loading ? (
+                <BigSpinner />
+            ) : (
+                <h1 className="text-danger">No orders</h1>
+            );
         }
     };
 
