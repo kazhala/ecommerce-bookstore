@@ -39,7 +39,7 @@ const reducer = (state, action) => {
             return { ...state, loading: !state.loading };
         }
         case 'address': {
-            return { ...state, address: action.value };
+            return { ...state, address: action.value, error: '' };
         }
         default:
             return state;
@@ -109,6 +109,9 @@ const Checkout = props => {
                     paymentMethodNonce: nonce,
                     amount: getTotal(products)
                 };
+                if (address === '') {
+                    throw new Error('Please enter delivery address');
+                }
                 processPayment(userId, token, paymentData)
                     .then(res => {
                         const orderData = {
