@@ -1,7 +1,7 @@
 /**
  * check box for filter bar
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const CheckBox = props => {
     const { categories, handleFilters } = props;

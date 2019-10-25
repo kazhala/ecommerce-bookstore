@@ -5,7 +5,7 @@ import { isAuthenticated } from '../auth';
 
 const AdminDashBoard = props => {
     const {
-        user: { _id, name, email, role }
+        user: { name, email, role }
     } = isAuthenticated();
 
     const adminLinks = () => {

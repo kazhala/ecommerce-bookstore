@@ -11,6 +11,7 @@ import ButtonSpinner from '../Loaders/ButtonSpinner';
 const Shop = props => {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState('');
+    //eslint-disable-next-line
     const [limit, setLimit] = useState(6);
     const [skip, setSkip] = useState(0);
     const [size, setSize] = useState(0);
@@ -119,6 +120,10 @@ const Shop = props => {
         );
     };
 
+    const showError = () => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
     return (
         <Layout
             title="Shop Page"
@@ -143,6 +148,7 @@ const Shop = props => {
                     </div>
                 </div>
                 <div className="col-8">
+                    {showError()}
                     <h2 className="mb-4">Products</h2>
                     <div className="row">
                         {loading ? (

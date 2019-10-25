@@ -144,6 +144,10 @@ const Profile = props => {
         </form>
     );
 
+    const showError = () => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
     return (
         <Layout
             title="Profile"
@@ -151,6 +155,7 @@ const Profile = props => {
             className="container-fluid"
         >
             <h2 className="mb-4">Profile update</h2>
+            {showError()}
             {profileUpdate(name, email, password)}
         </Layout>
     );

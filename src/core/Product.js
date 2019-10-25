@@ -37,6 +37,10 @@ const Product = props => {
 
     // console.log(relatedProduct);
 
+    const showError = () => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
     return (
         <Layout
             title={product && product.name}
@@ -65,6 +69,7 @@ const Product = props => {
             )}
             <div className="row">
                 <div className="col-8">
+                    {showError()}
                     {product && product.description && (
                         <Card product={product} showViewProductButton={false} />
                     )}

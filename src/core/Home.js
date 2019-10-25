@@ -69,6 +69,10 @@ const Home = props => {
         loadProductsBySell();
     }, []);
 
+    const showError = () => {
+        return error && <div className="alert alert-danger">{error}</div>;
+    };
+
     return (
         <Layout
             title={'Home Page'}
@@ -76,6 +80,7 @@ const Home = props => {
             className="container-fluid"
         >
             <Search />
+            {showError()}
             <h2 className="mb-4">New Arrivals</h2>
             <div className="row">
                 {loading ? (

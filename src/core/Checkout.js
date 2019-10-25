@@ -98,7 +98,7 @@ const Checkout = props => {
         //send the nounce to the server
         //nouce = instance.requestPaymentMethod()
         let nonce;
-        let getNonce = instance
+        instance
             .requestPaymentMethod()
             .then(res => {
                 // console.log(res);
