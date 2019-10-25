@@ -51,31 +51,34 @@ const ManageProducts = () => {
                         Total {products.length} products
                     </h2>
                     <hr />
-                    <ul className="list-group">
-                        {products.map((product, index) => (
-                            <li
-                                key={index}
-                                className="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                                <strong>{product.name}</strong>
-                                <Link
-                                    to={`/admin/product/update/${product._id}`}
+                    {loading ? (
+                        <BigSpinner />
+                    ) : (
+                        <ul className="list-group">
+                            {products.map((product, index) => (
+                                <li
+                                    key={index}
+                                    className="list-group-item d-flex justify-content-between align-items-center"
                                 >
-                                    <span className="badge badge-warning badge-pill">
-                                        Update
+                                    <strong>{product.name}</strong>
+                                    <Link
+                                        to={`/admin/product/update/${product._id}`}
+                                    >
+                                        <span className="badge badge-warning badge-pill">
+                                            Update
+                                        </span>
+                                    </Link>
+                                    <span
+                                        className="badge badge-danger badge-pill"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => destroy(product._id)}
+                                    >
+                                        Delete
                                     </span>
-                                </Link>
-                                <span
-                                    className="badge badge-danger badge-pill"
-                                    style={{ cursor: 'pointer' }}
-                                    onClick={() => destroy(product._id)}
-                                >
-                                    Delete
-                                </span>
-                            </li>
-                        ))}
-                    </ul>
-                    {loading && <BigSpinner />}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </Layout>

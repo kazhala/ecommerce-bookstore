@@ -1,8 +1,10 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useCallback, useState, useReducer, useEffect } from 'react';
 import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
-import { createProduct, getCategories } from './apiAdmin';
+import { getProduct, getCategories, updateProduct } from './apiAdmin';
+import BigSpinner from '../Loaders/BigSpinner';
+import ButtonSpinner from '../Loaders/ButtonSpinner';
 
 const initialState = {
     name: '',
@@ -65,6 +67,19 @@ const reducer = (state, action) => {
                 error: '',
                 createdProduct: ''
             };
+        case 'mount1':
+            return {
+                ...state,
+                name: action.payload.name,
+                description: action.payload.description,
+                price: action.payload.price,
+                category: action.payload.category,
+                shipping: action.payload.shipping,
+                quantity: action.payload.quantity,
+                loading: false
+            };
+        case 'loading':
+            return { ...state, loading: true };
         default:
             return state;
     }
@@ -87,12 +102,13 @@ const UpdateProduct = props => {
         loading,
         error,
         createdProduct,
-        formData,
-        redirectToProfile
+        formData
     } = formState;
 
+    const { match, history } = props;
+
     //load categories and set form data
-    const init = () => {
+    const initCategories = useCallback(() => {
         getCategories().then(res => {
             if (res.error) {
                 dispatch({ type: 'error', value: res.error });
@@ -100,11 +116,41 @@ const UpdateProduct = props => {
                 dispatch({ type: 'mount', value: res });
             }
         });
-    };
+    }, []);
+
+    const init = useCallback(
+        productId => {
+            dispatch({ type: 'loading' });
+            getProduct(productId).then(res => {
+                if (res.error) {
+                    dispatch({ type: 'error', value: res.error });
+                } else {
+                    dispatch({
+                        type: 'mount1',
+                        payload: {
+                            name: res.name,
+                            description: res.description,
+                            price: res.price,
+                            category: res.category._id,
+                            shipping: res.shipping ? 1 : 0,
+                            quantity: res.quantity
+                        }
+                    });
+                    initCategories();
+                }
+            });
+        },
+        [initCategories]
+    );
 
     useEffect(() => {
-        init();
-    }, [success]);
+        if (!success) {
+            init(match.params.productId);
+        } else if (success) {
+            alert('Successfully updated the product');
+            history.push('/admin/dashboard');
+        }
+    }, [success, history, match, init]);
 
     const handleChange = e => {
         const value = e.target.files ? e.target.files[0] : e.target.value;
@@ -116,20 +162,22 @@ const UpdateProduct = props => {
     const handleSubmit = e => {
         e.preventDefault();
         dispatch({ type: 'submit' });
-        createProduct(user._id, token, formData).then(res => {
-            if (res.error) {
-                dispatch({ type: 'error', value: res.error });
-                setSuccess(false);
-            } else {
-                dispatch({ type: 'success', value: res });
-                setSuccess(true);
+        updateProduct(match.params.productId, user._id, formData, token).then(
+            res => {
+                if (res.error) {
+                    dispatch({ type: 'error', value: res.error });
+                    setSuccess(false);
+                } else {
+                    dispatch({ type: 'success', value: res });
+                    setSuccess(true);
+                }
             }
-        });
+        );
     };
 
     const newPostForm = () => (
         <form className="mb-3" onSubmit={handleSubmit}>
-            <h4>Post Photo</h4>
+            <h4>Update Photo</h4>
             <div className="form-group">
                 <label className="btn btn-secondary">
                     <input
@@ -214,7 +262,13 @@ const UpdateProduct = props => {
                     )}
                 </select>
             </div>
-            <button className="btn btn-outline-primary">Crate Product</button>
+            {loading ? (
+                <ButtonSpinner color="btn-outline-primary" />
+            ) : (
+                <button className="btn btn-outline-primary">
+                    Update Product
+                </button>
+            )}
         </form>
     );
 
@@ -226,14 +280,14 @@ const UpdateProduct = props => {
         return (
             createdProduct && (
                 <div className="alert alert-info">
-                    <h2>{createdProduct} is created</h2>
+                    <h2>{createdProduct} is updated</h2>
                 </div>
             )
         );
     };
 
     const showLoading = () => {
-        return loading && <div className="alert alert-success">Loading...</div>;
+        return loading && <BigSpinner />;
     };
 
     const goBack = () => (

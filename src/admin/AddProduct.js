@@ -3,6 +3,8 @@ import Layout from '../core/Layout';
 import { isAuthenticated } from '../auth';
 import { Link } from 'react-router-dom';
 import { createProduct, getCategories } from './apiAdmin';
+import BigSpinner from '../Loaders/BigSpinner';
+import ButtonSpinner from '../Loaders/ButtonSpinner';
 
 const initialState = {
     name: '',
@@ -16,7 +18,6 @@ const initialState = {
     loading: false,
     error: '',
     createdProduct: '',
-    redirectToProfile: false,
     formData: ''
 };
 
@@ -87,8 +88,7 @@ const AddProduct = props => {
         loading,
         error,
         createdProduct,
-        formData,
-        redirectToProfile
+        formData
     } = formState;
 
     //load categories and set form data
@@ -214,7 +214,13 @@ const AddProduct = props => {
                     )}
                 </select>
             </div>
-            <button className="btn btn-outline-primary">Crate Product</button>
+            {loading ? (
+                <ButtonSpinner color="btn-outline-primary" />
+            ) : (
+                <button className="btn btn-outline-primary">
+                    Crate Product
+                </button>
+            )}
         </form>
     );
 
@@ -233,7 +239,7 @@ const AddProduct = props => {
     };
 
     const showLoading = () => {
-        return loading && <div className="alert alert-success">Loading...</div>;
+        return loading && <BigSpinner />;
     };
 
     const goBack = () => (
