@@ -93,7 +93,7 @@ export const updateOrderStatus = async (userId, token, orderId, status) => {
 
 export const getProducts = async () => {
     try {
-        const res = await fetch(`${API}/products`, {
+        const res = await fetch(`${API}/products?limit=100`, {
             method: 'GET'
         });
         return res.json();
@@ -129,7 +129,7 @@ export const getProduct = async productId => {
     }
 };
 
-export const updateProduct = async (productId, userId, product) => {
+export const updateProduct = async (productId, userId, product, token) => {
     try {
         const res = await fetch(`${API}/product/${productId}/${userId}`, {
             method: 'PUT',
