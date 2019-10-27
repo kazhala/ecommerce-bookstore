@@ -53,7 +53,7 @@ const SignIn = props => {
         dispatch({ type: 'submit' });
         e.preventDefault();
         signUserIn(email, password).then(data => {
-            console.log(data);
+            // console.log(data);
             if (data.error) {
                 dispatch({ type: 'error', value: data.error });
             } else {
