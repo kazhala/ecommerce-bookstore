@@ -50,17 +50,27 @@ const Card = ({
                 <button
                     className="btn btn-outline-warning mt-2 mb-2"
                     onClick={addToCart}
+                    disabled={product.quantity > 0 ? false : true}
+                    style={{ backgroundColor: product.quantity <= 0 && '#eee' }}
                 >
-                    Add to cart
+                    {product.quantity > 0 ? 'Add to cart' : 'Out of stock'}
                 </button>
             )
         );
     };
 
-    const handleChange = (e, productId) => {
-        setCount(e.target.value < 1 ? 1 : e.target.value);
+    const handleChange = (e, product) => {
+        let newCount = 1;
+        if (!e.target.value < 1) {
+            if (e.target.value > product.quantity) {
+                newCount = count;
+            } else {
+                newCount = e.target.value;
+            }
+        }
+        setCount(newCount);
         if (e.target.value >= 1) {
-            const updatedItem = updateItem(productId, e.target.value);
+            const updatedItem = updateItem(product._id, e.target.value);
             setCartItems(updatedItem);
         }
     };
@@ -79,7 +89,7 @@ const Card = ({
                             type="number"
                             className="form-control"
                             value={count}
-                            onChange={e => handleChange(e, product._id)}
+                            onChange={e => handleChange(e, product)}
                         />
                     </div>
                 </div>

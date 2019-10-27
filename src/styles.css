@@ -4,6 +4,10 @@
     border-radius: 0px;
 }
 
+.nav {
+    border-bottom: none;
+}
+
 .name {
     background: indigo;
     color: #fff;
