@@ -61,7 +61,8 @@ const Card = ({
 
     const handleChange = (e, product) => {
         let newCount = 1;
-        if (!e.target.value < 1) {
+        // console.log(e.target.value);
+        if (e.target.value > 1) {
             if (e.target.value > product.quantity) {
                 newCount = count;
             } else {
@@ -70,7 +71,7 @@ const Card = ({
         }
         setCount(newCount);
         if (e.target.value >= 1) {
-            const updatedItem = updateItem(product._id, e.target.value);
+            const updatedItem = updateItem(product._id, newCount);
             setCartItems(updatedItem);
         }
     };

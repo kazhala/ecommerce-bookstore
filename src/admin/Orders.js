@@ -21,7 +21,7 @@ const Orders = props => {
             if (res.error) {
                 console.log(res.error);
             } else {
-                setOrders(res);
+                setOrders(res.reverse());
             }
         });
     }, []);
@@ -50,11 +50,7 @@ const Orders = props => {
                 </h1>
             );
         } else {
-            return loading ? (
-                <BigSpinner />
-            ) : (
-                <h1 className="text-danger">No orders</h1>
-            );
+            return <h1 className="text-danger">No orders</h1>;
         }
     };
 
@@ -100,13 +96,36 @@ const Orders = props => {
         });
     };
 
+    const showLoading = loading => {
+        return (
+            loading && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        width: '100%',
+                        height: '100vh',
+                        zIndex: '10',
+                        background: 'none',
+                        top: '0',
+                        left: '0',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    <BigSpinner />
+                </div>
+            )
+        );
+    };
+
     return (
         <Layout title="Orders" description="Manage orders here">
             <div className="row">
                 <div className="col-md-8 offset-md-2">
                     {showOrdersLength()}
-
-                    {orders.reverse().map((order, orderIndex) => (
+                    {showLoading(loading)}
+                    {orders.map((order, orderIndex) => (
                         <div
                             className="mt-5"
                             key={orderIndex}
