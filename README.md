@@ -1,4 +1,5 @@
 <h1 align="center">Welcome to ecommerce-bookstore 👋</h1>
+<h4 align="center">Project URL: https://bookaz.best/</h4>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000" />
 </p>
@@ -29,7 +30,7 @@ npm run test
 
 👤 **Kevin Zhuang**
 
--   Github: [@KAZhala](https://github.com/KAZhala)
+-   Github: [@kazhala](https://github.com/kazhala)
 
 ## Show your support
 
